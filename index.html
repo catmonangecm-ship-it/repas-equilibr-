@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Coach Minceur - Le Secret du Poids</title>
+    <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2@1.8.4/dist/quagga.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 25px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab:hover {
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-box h3 {
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .weight-entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: end;
+        }
+
+        .weight-history {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .weight-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weight-item .date {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .weight-item .weight {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .weight-item .delete {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        canvas {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+
+        .conseil-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .conseil-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .conseil-card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .motivation-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .motivation-box .quote {
+            font-size: 1.3em;
+            font-style: italic;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .motivation-box .author {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .menu-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .menu-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .menu-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .menu-card li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .menu-card li:before {
+            content: "✓ ";
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Mon Coach Minceur</h1>
+            <p>Votre programme personnalisé pour atteindre vos objectifs</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('profil')">📊 Mon Profil</button>
+                <button class="tab" onclick="showTab('suivi')">📈 Suivi du Poids</button>
+                <button class="tab" onclick="showTab('scanner')">📷 Scanner Produit</button>
+                <button class="tab" onclick="showTab('conseils')">🥗 Conseils Nutrition</button>
+                <button class="tab" onclick="showTab('motivation')">💪 Motivation</button>
+                <button class="tab" onclick="showTab('menus')">🍽️ Menus Types</button>
+                <button class="tab" onclick="showTab('calories')">📖 Base Calories</button>
+            </div>
+
+            <!-- Onglet Profil -->
+            <div id="profil" class="tab-content active">
+                <h2>Créez votre profil personnalisé</h2>
+                
+                <div class="form-group">
+                    <label>Nom / Prénom</label>
+                    <input type="text" id="nom" placeholder="Entrez votre nom">
+                </div>
+
+                <div class="form-group">
+                    <label>Sexe</label>
+                    <select id="sexe">
+                        <option value="femme">Femme</option>
+                        <option value="homme">Homme</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Âge (années)</label>
+                    <input type="number" id="age" placeholder="25" min="10" max="100">
+                </div>
+
+                <div class="form-group">
+                    <label>Taille (cm)</label>
+                    <input type="number" id="taille" placeholder="170" min="100" max="250">
+                </div>
+
+                <div class="form-group">
+                    <label>Poids actuel (kg)</label>
+                    <input type="number" id="poids" placeholder="70" step="0.1" min="30" max="300">
+                </div>
+
+                <div class="form-group">
+                    <label>Poids objectif (kg)</label>
+                    <input type="number" id="objectif" placeholder="65" step="0.1" min="30" max="300">
+                </div>
+
+                <div class="form-group">
+                    <label>Niveau d'activité</label>
+                    <select id="activite">
+                        <option value="1.2">Sédentaire (peu ou pas d'exercice)</option>
+                        <option value="1.375">Légèrement actif (exercice 1-3 jours/semaine)</option>
+                        <option value="1.55">Modérément actif (exercice 3-5 jours/semaine)</option>
+                        <option value="1.725">Très actif (exercice 6-7 jours/semaine)</option>
+                        <option value="1.9">Extrêmement actif (exercice intense quotidien)</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="calculerProfil()">Calculer mon programme</button>
+
+                <div id="resultatProfil" class="result-box">
+                    <h3>Votre bilan personnalisé</h3>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="value" id="imcValue">-</div>
+                            <div class="label">IMC</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="poidsIdealValue">-</div>
+                            <div class="label">Poids idéal (kg)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="aPerdrValue">-</div>
+                            <div class="label">À perdre (kg)</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="value" id="caloriesValue">-</div>
+                            <div class="label">Calories/jour</div>
+                        </div>
+                    </div>
+                    <div id="imcCategorie" style="margin-top: 15px; font-size: 1.1em;"></div>
+                    <div id="dureeProgramme" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+
+            <!-- Onglet Suivi -->
+            <div id="suivi" class="tab-content">
+                <h2>Suivez votre progression</h2>
+                
+                <div class="weight-entry">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Date</label>
+                        <input type="date" id="datePesee">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Poids (kg)</label>
+                        <input type="number" id="poidsPesee" step="0.1" placeholder="70.5">
+                    </div>
+                    <button class="btn" onclick="ajouterPesee()" style="margin-top: 0;">Ajouter</button>
+                </div>
+
+                <div id="progressionActuelle"></div>
+
+                <canvas id="graphiquePoids" width="400" height="200"></canvas>
+
+                <div class="weight-history">
+                    <h3 style="margin-bottom: 15px;">Historique des pesées</h3>
+                    <div id="listePesees"></div>
+                </div>
+            </div>
+
+            <!-- Onglet Scanner -->
+            <div id="scanner" class="tab-content">
+                <h2>Scanner un produit alimentaire</h2>
+                
+                <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="text-align: center; color: #333; font-size: 1.1em;">
+                        📱 Scannez le code-barres de vos produits pour obtenir instantanément leurs informations nutritionnelles
+                    </p>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <video id="video" width="100%" style="max-width: 500px; border-radius: 10px; display: none; background: #000;"></video>
+                    <canvas id="canvas" style="display: none;"></canvas>
+                    
+                    <div id="scanPlaceholder" style="background: #f0f0f0; padding: 60px 20px; border-radius: 10px; max-width: 500px; margin: 0 auto;">
+                        <div style="font-size: 4em; margin-bottom: 15px;">📷</div>
+                        <p style="color: #666; font-size: 1.1em;">Cliquez sur le bouton ci-dessous pour activer votre caméra</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <button class="btn" id="startScanBtn" onclick="demarrerScanner()">📷 Démarrer le scanner</button>
+                    <button class="btn" id="stopScanBtn" onclick="arreterScanner()" style="display: none; background: #f44336;">⏹️ Arrêter le scanner</button>
+                </div>
+
+                <div style="margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px; color: #667eea;">⌨️ Ou saisissez le code-barres manuellement</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="manualBarcode" placeholder="Ex: 3017620422003" style="flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                        <button class="btn" onclick="rechercherCodeBarre()" style="width: auto; margin: 0; padding: 12px 30px;">🔍 Rechercher</button>
+                    </div>
+                    <p style="margin-top: 10px; color: #666; font-size: 0.9em;">Le code-barres se trouve généralement sous le produit (13 chiffres)</p>
+                </div>
+
+                <div id="loadingScanner" style="display: none; text-align: center; padding: 40px;">
+                    <div style="font-size: 3em; animation: spin 1s linear infinite;">⌛</div>
+                    <p style="color: #667eea; font-size: 1.2em; margin-top: 10px;">Recherche en cours...</p>
+                </div>
+
+                <div id="resultatScanner" style="display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📦 Informations du produit</h3>
+                    
+                    <div style="background: white; border: 2px solid #667eea; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; gap: 20px; align-items: start; flex-wrap: wrap;">
+                            <img id="productImage" src="" alt="Produit" style="width: 150px; height: 150px; object-fit: contain; border-radius: 8px; background: #f8f9fa;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <h4 id="productName" style="color: #333; margin-bottom: 10px; font-size: 1.3em;"></h4>
+                                <p id="productBrand" style="color: #667eea; font-weight: 600; margin-bottom: 5px;"></p>
+                                <p id="productQuantity" style="color: #666; margin-bottom: 10px;"></p>
+                                <p id="productBarcode" style="color: #999; font-size: 0.9em;"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="value" id="productCalories">-</div>
+                            <div class="label">Calories (kcal/100g)</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="value" id="productProteines">-</div>
+                            <div class="label">Protéines (g/100g)</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <div class="value" id="productGlucides">-</div>
+                            <div class="label">Glucides (g/100g)</div>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <div class="value" id="productLipides">-</div>
+                            <div class="label">Lipides (g/100g)</div>
+                        </div>
+                    </div>
+
+                    <div id="nutriscoreContainer" style="margin-top: 20px; text-align: center; display: none;">
+                        <h4 style="margin-bottom: 10px;">Score nutritionnel</h4>
+                        <img id="nutriscoreImage" src="" alt="Nutri-Score" style="max-width: 200px;">
+                    </div>
+
+                    <button class="btn" onclick="sauvegarderProduit()" style="margin-top: 20px;">💾 Sauvegarder ce produit</button>
+                </div>
+
+                <div id="erreurScanner" style="display: none; background: #ffebee; color: #c62828; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center;">
+                    <h4 style="margin-bottom: 10px;">❌ Produit non trouvé</h4>
+                    <p>Ce code-barres n'a pas été trouvé dans notre base de données. Essayez avec un autre produit ou vérifiez le code saisi.</p>
+                </div>
+
+                <div id="historiqueProduits" style="margin-top: 40px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📚 Mes produits scannés</h3>
+                    <div id="listeProduits"></div>
+                </div>
+            </div>
+
+            <!-- Onglet Conseils -->
+            <div id="conseils" class="tab-content">
+                <h2>Conseils Nutrition & Bien-être</h2>
+                
+                <div class="conseil-card">
+                    <h4>🥗 Règle n°1 : L'équilibre alimentaire</h4>
+                    <p>Privilégiez une alimentation variée et équilibrée. Chaque repas devrait contenir des protéines, des glucides complexes, des légumes et de bonnes graisses. Ne sautez jamais de repas !</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>💧 Règle n°2 : L'hydratation</h4>
+                    <p>Buvez au moins 1,5 à 2 litres d'eau par jour. L'eau aide à éliminer les toxines, favorise la digestion et peut réduire la sensation de faim. Commencez votre journée avec un grand verre d'eau.</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>⏰ Règle n°3 : Les horaires réguliers</h4>
+                    <p>Mangez à heures fixes pour réguler votre métabolisme. Idéalement : petit-déjeuner avant 9h, déjeuner entre 12h et 13h, dîner avant 20h. Évitez de grignoter entre les repas.</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>🥦 Règle n°4 : Légumes à volonté</h4>
+                    <p>Les légumes sont vos meilleurs alliés ! Riches en fibres, vitamines et minéraux, ils vous rassasient sans apporter beaucoup de calories. Visez 5 portions de fruits et légumes par jour.</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>🏃‍♀️ Règle n°5 : L'activité physique</h4>
+                    <p>Bougez au moins 30 minutes par jour ! Marche, vélo, natation, danse... Choisissez une activité qui vous plaît. L'exercice booste votre métabolisme et améliore votre bien-être.</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>😴 Règle n°6 : Le sommeil</h4>
+                    <p>Dormez 7 à 8 heures par nuit. Le manque de sommeil perturbe les hormones de la faim et augmente les envies de sucre. Un bon sommeil est essentiel pour perdre du poids durablement.</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>🍫 Règle n°7 : Les plaisirs autorisés</h4>
+                    <p>Autorisez-vous un petit plaisir de temps en temps pour éviter les frustrations. L'important est la régularité, pas la perfection. Un carré de chocolat noir 70% peut être votre allié !</p>
+                </div>
+
+                <div class="conseil-card">
+                    <h4>📱 Règle n°8 : La pleine conscience</h4>
+                    <p>Mangez lentement, en pleine conscience, sans écran. Prenez le temps de savourer chaque bouchée. Cela favorise la satiété et améliore votre rapport à la nourriture.</p>
+                </div>
+            </div>
+
+            <!-- Onglet Motivation -->
+            <div id="motivation" class="tab-content">
+                <h2>Votre dose de motivation quotidienne</h2>
+                
+                <div class="motivation-box">
+                    <div class="quote" id="citationJour"></div>
+                    <div class="author" id="auteurCitation"></div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">🎯 Vos objectifs de la semaine</h3>
+                    
+                    <div class="conseil-card">
+                        <h4>Lundi : Démarrage en douceur</h4>
+                        <p>Commencez la semaine du bon pied ! Buvez un grand verre d'eau au réveil et prenez un petit-déjeuner complet. Fixez-vous 3 objectifs pour la semaine.</p>
+                    </div>
+
+                    <div class="conseil-card">
+                        <h4>Mardi : Jour des protéines</h4>
+                        <p>Assurez-vous d'avoir des protéines à chaque repas aujourd'hui. Elles vous aideront à vous sentir rassasié plus longtemps et à maintenir votre masse musculaire.</p>
+                    </div>
+
+                    <div class="conseil-card">
+                        <h4>Mercredi : Challenge activité</h4>
+                        <p>Aujourd'hui, faites 10 000 pas ! Prenez les escaliers, descendez un arrêt avant en transport, faites une promenade après le déjeuner. Bougez !</p>
+                    </div>
+
+                    <div class="conseil-card">
+                        <h4>Jeudi : Jour végétarien</h4>
+                        <p>Testez un repas 100% végétarien aujourd'hui. Découvrez de nouvelles recettes à base de légumineuses, tofu ou légumes. Votre corps et la planète vous remercieront !</p>
+                    </div>
+
+                    <div class="conseil-card">
+                        <h4>Vendredi : Préparation weekend</h4>
+                        <p>Préparez vos repas du weekend pour éviter les tentations. Faites vos courses avec une liste et ne partez jamais le ventre vide au supermarché.</p>
+                    </div>
+
+                    <div class="conseil-card">
+                        <h4>Weekend : Équilibre et plaisir</h4>
+                        <p>Le weekend, c'est le moment de vous faire plaisir intelligemment. Sortez, bougez, profitez mais gardez vos bonnes habitudes. L'équilibre est la clé !</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Base Calories -->
+            <div id="calories" class="tab-content">
+                <h2>Base de données nutritionnelle complète</h2>
+                
+                <div style="text-align: center; padding: 40px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 15px; margin: 20px 0;">
+                    <h3 style="color: #333; margin-bottom: 15px; font-size: 1.8em;">🍎 Découvrez les calories de tous les aliments</h3>
+                    <p style="color: #555; font-size: 1.1em; margin-bottom: 25px; line-height: 1.6;">
+                        Accédez à une base de données complète de plus de 150 aliments avec leurs informations nutritionnelles détaillées : calories, protéines, glucides et lipides pour 100g.
+                    </p>
+                    <a href="calories-ingredients.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-size: 1.2em; font-weight: bold; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); transition: all 0.3s;">
+                        🔍 Ouvrir la base de données
+                    </a>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">✨ Fonctionnalités de la base de données</h3>
+                    
+                    <div class="menu-grid">
+                        <div class="menu-card">
+                            <h4>🔎 Recherche rapide</h4>
+                            <ul>
+                                <li>Trouvez n'importe quel aliment instantanément</li>
+                                <li>Résultats en temps réel</li>
+                            </ul>
+                        </div>
+
+                        <div class="menu-card">
+                            <h4>🏷️ Filtres par catégorie</h4>
+                            <ul>
+                                <li>Fruits, légumes, viandes, poissons</li>
+                                <li>Céréales, produits laitiers, noix</li>
+                                <li>Plus de 12 catégories disponibles</li>
+                            </ul>
+                        </div>
+
+                        <div class="menu-card">
+                            <h4>📊 Informations complètes</h4>
+                            <ul>
+                                <li>Calories par 100g</li>
+                                <li>Protéines, glucides, lipides</li>
+                                <li>Indicateurs visuels clairs</li>
+                            </ul>
+                        </div>
+
+                        <div class="menu-card">
+                            <h4>📈 Tri intelligent</h4>
+                            <ul>
+                                <li>Triez par calories</li>
+                                <li>Triez par protéines</li>
+                                <li>Comparez facilement les aliments</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">💡 Astuce nutrition</h4>
+                    <p style="color: #856404; line-height: 1.6;">
+                        Utilisez la base de données pour composer vos repas équilibrés. Un repas idéal contient environ 500-600 calories avec un bon équilibre entre protéines (30%), glucides (40%) et lipides (30%). Les aliments à moins de 100 calories pour 100g sont parfaits pour les grosses portions !
+                    </p>
+                </div>
+
+                <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 10px;">
+                    <h4 style="color: #333; margin-bottom: 10px;">🎯 Exemples de portions</h4>
+                    <ul style="color: #555; line-height: 1.8;">
+                        <li><strong>100g de poulet</strong> = environ la taille de la paume de votre main</li>
+                        <li><strong>100g de pâtes cuites</strong> = environ 1 tasse</li>
+                        <li><strong>100g de légumes</strong> = environ 1 grosse poignée</li>
+                        <li><strong>30g de fromage</strong> = environ la taille de 2 dominos</li>
+                        <li><strong>Une portion de fruit</strong> = 1 fruit moyen (150-200g)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Onglet Menus -->
+            <div id="menus" class="tab-content">
+                <h2>Exemples de menus équilibrés</h2>
+                
+                <div class="menu-grid">
+                    <div class="menu-card">
+                        <h4>Petit-déjeuner 1</h4>
+                        <ul>
+                            <li>Porridge d'avoine au lait</li>
+                            <li>Fruits rouges frais</li>
+                            <li>1 cuillère de miel</li>
+                            <li>Thé vert ou café sans sucre</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Petit-déjeuner 2</h4>
+                        <ul>
+                            <li>2 tranches de pain complet</li>
+                            <li>1 avocat écrasé</li>
+                            <li>1 œuf poché</li>
+                            <li>Jus d'orange frais</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Déjeuner 1</h4>
+                        <ul>
+                            <li>Salade verte mixte</li>
+                            <li>Poulet grillé (150g)</li>
+                            <li>Quinoa aux légumes</li>
+                            <li>1 yaourt nature</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Déjeuner 2</h4>
+                        <ul>
+                            <li>Saumon au four (120g)</li>
+                            <li>Brocolis vapeur</li>
+                            <li>Riz basmati complet</li>
+                            <li>Compote sans sucre ajouté</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Dîner 1</h4>
+                        <ul>
+                            <li>Soupe de légumes maison</li>
+                            <li>Omelette aux champignons</li>
+                            <li>Salade verte</li>
+                            <li>Fruit de saison</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Dîner 2</h4>
+                        <ul>
+                            <li>Poisson blanc vapeur</li>
+                            <li>Haricots verts</li>
+                            <li>Patate douce rôtie</li>
+                            <li>Fromage blanc 0%</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Collation 1</h4>
+                        <ul>
+                            <li>1 pomme</li>
+                            <li>Poignée d'amandes (15-20)</li>
+                            <li>Thé vert</li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-card">
+                        <h4>Collation 2</h4>
+                        <ul>
+                            <li>Yaourt grec nature</li>
+                            <li>Fruits rouges</li>
+                            <li>1 cuillère de graines de chia</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">💡 Astuce du chef</h4>
+                    <p style="color: #856404;">Préparez vos repas à l'avance le dimanche pour toute la semaine. Utilisez des contenants hermétiques et variez les menus pour ne pas vous lasser. La préparation est la clé du succès !</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Citations motivantes
+        const citations = [
+            { texte: "Le succès, c'est la somme de petits efforts répétés jour après jour.", auteur: "Robert Collier" },
+            { texte: "Votre corps peut tout faire, c'est votre esprit qu'il faut convaincre.", auteur: "Anonyme" },
+            { texte: "La motivation vous fait démarrer, l'habitude vous fait continuer.", auteur: "Jim Ryun" },
+            { texte: "Prenez soin de votre corps, c'est le seul endroit où vous êtes obligé de vivre.", auteur: "Jim Rohn" },
+            { texte: "Le secret pour avancer est de commencer.", auteur: "Mark Twain" },
+            { texte: "Ne vous comparez qu'à la personne que vous étiez hier.", auteur: "Jordan Peterson" },
+            { texte: "Vous n'avez pas à être extrême, juste constant.", auteur: "Anonyme" },
+            { texte: "Chaque expert a été un jour un débutant.", auteur: "Robin Sharma" }
+        ];
+
+        // Données utilisateur
+        let userData = JSON.parse(localStorage.getItem('userData')) || {};
+        let pesees = JSON.parse(localStorage.getItem('pesees')) || [];
+        let produitsSauvegardes = JSON.parse(localStorage.getItem('produits')) || [];
+        let scannerActif = false;
+        let dernierProduit = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            chargerProfil();
+            afficherCitationAleatoire();
+            afficherPesees();
+            afficherHistoriqueProduits();
+            document.getElementById('datePesee').valueAsDate = new Date();
+            
+            // Ajouter event listener pour la touche Entrée sur le champ code-barres
+            document.getElementById('manualBarcode').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    rechercherCodeBarre();
+                }
+            });
+        });
+
+        function showTab(tabName) {
+            // Arrêter le scanner si on quitte l'onglet scanner
+            if (scannerActif && tabName !== 'scanner') {
+                arreterScanner();
+            }
+
+            // Cacher tous les contenus
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Afficher le contenu sélectionné
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Redessiner le graphique si onglet suivi
+            if (tabName === 'suivi') {
+                dessinerGraphique();
+            }
+        }
+
+        function calculerProfil() {
+            const nom = document.getElementById('nom').value;
+            const sexe = document.getElementById('sexe').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const taille = parseFloat(document.getElementById('taille').value);
+            const poids = parseFloat(document.getElementById('poids').value);
+            const objectif = parseFloat(document.getElementById('objectif').value);
+            const activite = parseFloat(document.getElementById('activite').value);
+
+            if (!nom || !age || !taille || !poids || !objectif) {
+                alert('Veuillez remplir tous les champs');
+                return;
+            }
+
+            // Calcul IMC
+            const imc = (poids / ((taille / 100) ** 2)).toFixed(1);
+            
+            // Calcul poids idéal (formule de Lorentz)
+            let poidsIdeal;
+            if (sexe === 'homme') {
+                poidsIdeal = (taille - 100 - ((taille - 150) / 4)).toFixed(1);
+            } else {
+                poidsIdeal = (taille - 100 - ((taille - 150) / 2.5)).toFixed(1);
+            }
+
+            // Poids à perdre
+            const aPerdre = Math.max(0, poids - objectif).toFixed(1);
+
+            // Calcul calories (formule de Harris-Benedict)
+            let bmr;
+            if (sexe === 'homme') {
+                bmr = 88.362 + (13.397 * poids) + (4.799 * taille) - (5.677 * age);
+            } else {
+                bmr = 447.593 + (9.247 * poids) + (3.098 * taille) - (4.330 * age);
+            }
+            const calories = Math.round((bmr * activite) - 500); // Déficit de 500 cal pour perdre du poids
+
+            // Catégorie IMC
+            let categorieIMC;
+            if (imc < 18.5) {
+                categorieIMC = "Insuffisance pondérale";
+            } else if (imc < 25) {
+                categorieIMC = "Poids normal - Félicitations ! 🎉";
+            } else if (imc < 30) {
+                categorieIMC = "Surpoids - Vous êtes sur la bonne voie ! 💪";
+            } else {
+                categorieIMC = "Obésité - Courage, chaque pas compte ! 🌟";
+            }
+
+            // Durée estimée (0.5kg par semaine)
+            const semaines = Math.ceil(aPerdre / 0.5);
+            const mois = (semaines / 4.33).toFixed(1);
+
+            // Affichage
+            document.getElementById('imcValue').textContent = imc;
+            document.getElementById('poidsIdealValue').textContent = poidsIdeal;
+            document.getElementById('aPerdrValue').textContent = aPerdre;
+            document.getElementById('caloriesValue').textContent = calories;
+            document.getElementById('imcCategorie').innerHTML = `<strong>Catégorie :</strong> ${categorieIMC}`;
+            document.getElementById('dureeProgramme').innerHTML = `<strong>Durée estimée :</strong> ${semaines} semaines (environ ${mois} mois) pour atteindre votre objectif de manière saine.`;
+
+            document.getElementById('resultatProfil').classList.add('show');
+
+            // Sauvegarder
+            userData = { nom, sexe, age, taille, poids, objectif, activite, imc, poidsIdeal, calories };
+            localStorage.setItem('userData', JSON.stringify(userData));
+        }
+
+        function chargerProfil() {
+            if (Object.keys(userData).length > 0) {
+                document.getElementById('nom').value = userData.nom || '';
+                document.getElementById('sexe').value = userData.sexe || 'femme';
+                document.getElementById('age').value = userData.age || '';
+                document.getElementById('taille').value = userData.taille || '';
+                document.getElementById('poids').value = userData.poids || '';
+                document.getElementById('objectif').value = userData.objectif || '';
+                document.getElementById('activite').value = userData.activite || '1.2';
+            }
+        }
+
+        function ajouterPesee() {
+            const date = document.getElementById('datePesee').value;
+            const poids = parseFloat(document.getElementById('poidsPesee').value);
+
+            if (!date || !poids) {
+                alert('Veuillez remplir la date et le poids');
+                return;
+            }
+
+            // Vérifier si la date existe déjà
+            const index = pesees.findIndex(p => p.date === date);
+            if (index !== -1) {
+                if (confirm('Une pesée existe déjà pour cette date. Voulez-vous la remplacer ?')) {
+                    pesees[index] = { date, poids };
+                } else {
+                    return;
+                }
+            } else {
+                pesees.push({ date, poids });
+            }
+
+            // Trier par date
+            pesees.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            localStorage.setItem('pesees', JSON.stringify(pesees));
+            afficherPesees();
+            dessinerGraphique();
+
+            // Réinitialiser
+            document.getElementById('poidsPesee').value = '';
+            document.getElementById('datePesee').valueAsDate = new Date();
+        }
+
+        function afficherPesees() {
+            const liste = document.getElementById('listePesees');
+            liste.innerHTML = '';
+
+            if (pesees.length === 0) {
+                liste.innerHTML = '<p style="text-align: center; color: #999;">Aucune pesée enregistrée</p>';
+                return;
+            }
+
+            // Afficher progression
+            afficherProgression();
+
+            // Afficher la liste inversée (plus récent en premier)
+            [...pesees].reverse().forEach((pesee, index) => {
+                const realIndex = pesees.length - 1 - index;
+                const div = document.createElement('div');
+                div.className = 'weight-item';
+                
+                const dateFormatee = new Date(pesee.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                div.innerHTML = `
+                    <span class="date">${dateFormatee}</span>
+                    <span class="weight">${pesee.poids} kg</span>
+                    <button class="delete" onclick="supprimerPesee(${realIndex})">Supprimer</button>
+                `;
+                liste.appendChild(div);
+            });
+        }
+
+        function afficherProgression() {
+            const progressionDiv = document.getElementById('progressionActuelle');
+            
+            if (pesees.length === 0 || !userData.objectif) {
+                progressionDiv.innerHTML = '';
+                return;
+            }
+
+            const poidsActuel = pesees[pesees.length - 1].poids;
+            const poidsDepart = pesees[0].poids;
+            const objectif = userData.objectif;
+
+            const totalAPerdre = poidsDepart - objectif;
+            const dejaPerdu = poidsDepart - poidsActuel;
+            const resteAPerdre = poidsActuel - objectif;
+
+            const pourcentage = Math.min(100, Math.max(0, (dejaPerdu / totalAPerdre) * 100));
+
+            progressionDiv.innerHTML = `
+                <div style="background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%); padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="color: white; margin-bottom: 10px;">📊 Votre progression</h3>
+                    <div style="display: flex; justify-content: space-between; color: white; margin-bottom: 10px;">
+                        <span>Départ: ${poidsDepart} kg</span>
+                        <span>Actuel: ${poidsActuel} kg</span>
+                        <span>Objectif: ${objectif} kg</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${pourcentage}%">${pourcentage.toFixed(1)}%</div>
+                    </div>
+                    <div style="color: white; margin-top: 10px; text-align: center;">
+                        <strong>Perdu: ${dejaPerdu.toFixed(1)} kg</strong> sur ${totalAPerdre.toFixed(1)} kg
+                        ${resteAPerdre > 0 ? ` - Encore ${resteAPerdre.toFixed(1)} kg à perdre !` : ' - Objectif atteint ! 🎉'}
+                    </div>
+                </div>
+            `;
+        }
+
+        function supprimerPesee(index) {
+            if (confirm('Voulez-vous vraiment supprimer cette pesée ?')) {
+                pesees.splice(index, 1);
+                localStorage.setItem('pesees', JSON.stringify(pesees));
+                afficherPesees();
+                dessinerGraphique();
+            }
+        }
+
+        function dessinerGraphique() {
+            const canvas = document.getElementById('graphiquePoids');
+            const ctx = canvas.getContext('2d');
+
+            // Ajuster la taille du canvas
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 300;
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Effacer
+            ctx.clearRect(0, 0, width, height);
+
+            if (pesees.length === 0) {
+                ctx.fillStyle = '#999';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Aucune donnée à afficher', width / 2, height / 2);
+                return;
+            }
+
+            const padding = 50;
+            const graphWidth = width - 2 * padding;
+            const graphHeight = height - 2 * padding;
+
+            // Trouver min et max
+            const poids = pesees.map(p => p.poids);
+            const minPoids = Math.min(...poids, userData.objectif || Infinity) - 2;
+            const maxPoids = Math.max(...poids) + 2;
+            const rangePoids = maxPoids - minPoids;
+
+            // Dessiner les axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.lineTo(width - padding, height - padding);
+            ctx.stroke();
+
+            // Dessiner la ligne objectif
+            if (userData.objectif) {
+                const yObjectif = height - padding - ((userData.objectif - minPoids) / rangePoids) * graphHeight;
+                ctx.strokeStyle = '#ff4757';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(padding, yObjectif);
+                ctx.lineTo(width - padding, yObjectif);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.fillStyle = '#ff4757';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(`Objectif: ${userData.objectif} kg`, width - padding + 5, yObjectif + 5);
+            }
+
+            // Dessiner les points et la ligne
+            ctx.strokeStyle = '#667eea';
+            ctx.fillStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+
+            pesees.forEach((pesee, index) => {
+                const x = padding + (index / (pesees.length - 1 || 1)) * graphWidth;
+                const y = height - padding - ((pesee.poids - minPoids) / rangePoids) * graphHeight;
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+
+                // Dessiner les points
+                ctx.fillRect(x - 4, y - 4, 8, 8);
+
+                // Afficher le poids
+                ctx.fillStyle = '#333';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${pesee.poids}`, x, y - 10);
+
+                // Afficher la date (tous les N points)
+                if (pesees.length <= 10 || index % Math.ceil(pesees.length / 10) === 0 || index === pesees.length - 1) {
+                    const dateFormatee = new Date(pesee.date + 'T00:00:00').toLocaleDateString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit'
+                    });
+                    ctx.save();
+                    ctx.translate(x, height - padding + 15);
+                    ctx.rotate(-Math.PI / 4);
+                    ctx.fillText(dateFormatee, 0, 0);
+                    ctx.restore();
+                }
+
+                ctx.fillStyle = '#667eea';
+            });
+
+            ctx.stroke();
+
+            // Graduations Y
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const poids = minPoids + (rangePoids * i / 5);
+                const y = height - padding - (i * graphHeight / 5);
+                ctx.fillText(poids.toFixed(1) + ' kg', padding - 10, y + 4);
+            }
+        }
+
+        function afficherCitationAleatoire() {
+            const citation = citations[Math.floor(Math.random() * citations.length)];
+            document.getElementById('citationJour').textContent = `"${citation.texte}"`;
+            document.getElementById('auteurCitation').textContent = `- ${citation.auteur}`;
+        }
+
+        // ========== FONCTIONS SCANNER ==========
+
+        function demarrerScanner() {
+            const video = document.getElementById('video');
+            const placeholder = document.getElementById('scanPlaceholder');
+            const startBtn = document.getElementById('startScanBtn');
+            const stopBtn = document.getElementById('stopScanBtn');
+
+            // Cacher le résultat précédent
+            document.getElementById('resultatScanner').style.display = 'none';
+            document.getElementById('erreurScanner').style.display = 'none';
+
+            navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            })
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.play();
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'inline-block';
+                scannerActif = true;
+
+                // Initialiser Quagga
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: video,
+                        constraints: {
+                            facingMode: "environment"
+                        },
+                    },
+                    decoder: {
+                        readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader"]
+                    },
+                    locate: true
+                }, function(err) {
+                    if (err) {
+                        console.error(err);
+                        alert("Erreur lors de l'initialisation du scanner");
+                        return;
+                    }
+                    Quagga.start();
+                });
+
+                Quagga.onDetected(function(result) {
+                    if (result.codeResult && result.codeResult.code) {
+                        const code = result.codeResult.code;
+                        console.log("Code-barres détecté:", code);
+                        
+                        // Vibrer si disponible
+                        if (navigator.vibrate) {
+                            navigator.vibrate(200);
+                        }
+
+                        arreterScanner();
+                        rechercherProduitAPI(code);
+                    }
+                });
+            })
+            .catch(function(err) {
+                console.error("Erreur caméra:", err);
+                alert("Impossible d'accéder à la caméra. Veuillez autoriser l'accès à la caméra ou utiliser la saisie manuelle.");
+            });
+        }
+
+        function arreterScanner() {
+            const video = document.getElementById('video');
+            const placeholder = document.getElementById('scanPlaceholder');
+            const startBtn = document.getElementById('startScanBtn');
+            const stopBtn = document.getElementById('stopScanBtn');
+
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+            }
+
+            if (typeof Quagga !== 'undefined' && scannerActif) {
+                Quagga.stop();
+            }
+
+            video.style.display = 'none';
+            placeholder.style.display = 'block';
+            startBtn.style.display = 'inline-block';
+            stopBtn.style.display = 'none';
+            scannerActif = false;
+        }
+
+        function rechercherCodeBarre() {
+            const code = document.getElementById('manualBarcode').value.trim();
+            
+            if (!code) {
+                alert('Veuillez saisir un code-barres');
+                return;
+            }
+
+            if (!/^\d{8,13}$/.test(code)) {
+                alert('Le code-barres doit contenir entre 8 et 13 chiffres');
+                return;
+            }
+
+            rechercherProduitAPI(code);
+        }
+
+        async function rechercherProduitAPI(barcode) {
+            document.getElementById('loadingScanner').style.display = 'block';
+            document.getElementById('resultatScanner').style.display = 'none';
+            document.getElementById('erreurScanner').style.display = 'none';
+
+            try {
+                // Utiliser l'API OpenFoodFacts
+                const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
+                const data = await response.json();
+
+                document.getElementById('loadingScanner').style.display = 'none';
+
+                if (data.status === 1 && data.product) {
+                    afficherProduit(data.product, barcode);
+                } else {
+                    document.getElementById('erreurScanner').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erreur API:', error);
+                document.getElementById('loadingScanner').style.display = 'none';
+                document.getElementById('erreurScanner').style.display = 'block';
+            }
+        }
+
+        function afficherProduit(product, barcode) {
+            dernierProduit = {
+                barcode: barcode,
+                nom: product.product_name || 'Nom non disponible',
+                marque: product.brands || 'Marque inconnue',
+                quantite: product.quantity || '',
+                image: product.image_url || product.image_front_url || '',
+                calories: product.nutriments?.['energy-kcal_100g'] || product.nutriments?.['energy-kcal'] || 0,
+                proteines: product.nutriments?.proteins_100g || product.nutriments?.proteins || 0,
+                glucides: product.nutriments?.carbohydrates_100g || product.nutriments?.carbohydrates || 0,
+                lipides: product.nutriments?.fat_100g || product.nutriments?.fat || 0,
+                nutriscore: product.nutriscore_grade || null,
+                date: new Date().toISOString()
+            };
+
+            document.getElementById('productName').textContent = dernierProduit.nom;
+            document.getElementById('productBrand').textContent = dernierProduit.marque;
+            document.getElementById('productQuantity').textContent = dernierProduit.quantite;
+            document.getElementById('productBarcode').textContent = `Code-barres: ${barcode}`;
+
+            // Image
+            const imgElement = document.getElementById('productImage');
+            if (dernierProduit.image) {
+                imgElement.src = dernierProduit.image;
+                imgElement.style.display = 'block';
+            } else {
+                imgElement.style.display = 'none';
+            }
+
+            // Valeurs nutritionnelles
+            document.getElementById('productCalories').textContent = Math.round(dernierProduit.calories);
+            document.getElementById('productProteines').textContent = dernierProduit.proteines.toFixed(1);
+            document.getElementById('productGlucides').textContent = dernierProduit.glucides.toFixed(1);
+            document.getElementById('productLipides').textContent = dernierProduit.lipides.toFixed(1);
+
+            // Nutri-Score
+            const nutriscoreContainer = document.getElementById('nutriscoreContainer');
+            if (dernierProduit.nutriscore) {
+                nutriscoreContainer.style.display = 'block';
+                const nutriscoreImg = document.getElementById('nutriscoreImage');
+                nutriscoreImg.src = `https://static.openfoodfacts.org/images/misc/nutriscore-${dernierProduit.nutriscore}.svg`;
+            } else {
+                nutriscoreContainer.style.display = 'none';
+            }
+
+            document.getElementById('resultatScanner').style.display = 'block';
+            
+            // Scroll vers le résultat
+            document.getElementById('resultatScanner').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function sauvegarderProduit() {
+            if (!dernierProduit) return;
+
+            // Vérifier si le produit existe déjà
+            const index = produitsSauvegardes.findIndex(p => p.barcode === dernierProduit.barcode);
+            
+            if (index !== -1) {
+                if (confirm('Ce produit est déjà dans vos favoris. Voulez-vous mettre à jour la date ?')) {
+                    produitsSauvegardes[index] = dernierProduit;
+                } else {
+                    return;
+                }
+            } else {
+                produitsSauvegardes.unshift(dernierProduit);
+            }
+
+            localStorage.setItem('produits', JSON.stringify(produitsSauvegardes));
+            afficherHistoriqueProduits();
+            
+            alert('✅ Produit sauvegardé avec succès !');
+        }
+
+        function afficherHistoriqueProduits() {
+            const liste = document.getElementById('listeProduits');
+            
+            if (produitsSauvegardes.length === 0) {
+                liste.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Aucun produit sauvegardé</p>';
+                return;
+            }
+
+            liste.innerHTML = produitsSauvegardes.map((produit, index) => `
+                <div class="weight-item" style="flex-direction: column; align-items: stretch;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; color: #333; font-size: 1.1em;">${produit.nom}</div>
+                            <div style="color: #667eea; font-size: 0.9em;">${produit.marque}</div>
+                            <div style="color: #999; font-size: 0.85em; margin-top: 3px;">
+                                ${new Date(produit.date).toLocaleDateString('fr-FR')}
+                            </div>
+                        </div>
+                        <button class="delete" onclick="supprimerProduit(${index})">Supprimer</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: #667eea;">${Math.round(produit.calories)}</div>
+                            <div style="font-size: 0.8em; color: #666;">kcal</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: #f5576c;">${produit.proteines.toFixed(1)}g</div>
+                            <div style="font-size: 0.8em; color: #666;">protéines</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: #00f2fe;">${produit.glucides.toFixed(1)}g</div>
+                            <div style="font-size: 0.8em; color: #666;">glucides</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-weight: bold; color: #38f9d7;">${produit.lipides.toFixed(1)}g</div>
+                            <div style="font-size: 0.8em; color: #666;">lipides</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function supprimerProduit(index) {
+            if (confirm('Voulez-vous vraiment supprimer ce produit ?')) {
+                produitsSauvegardes.splice(index, 1);
+                localStorage.setItem('produits', JSON.stringify(produitsSauvegardes));
+                afficherHistoriqueProduits();
+            }
+        }
+
+        // ========== FIN FONCTIONS SCANNER ==========
+
+        // Redessiner le graphique lors du redimensionnement
+        window.addEventListener('resize', () => {
+            if (document.getElementById('suivi').classList.contains('active')) {
+                dessinerGraphique();
+            }
+        });
+    </script>
+</body>
+</html>
